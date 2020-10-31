@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title><style>
+        *{
+            margin: 0;
+            padding: 0
+        }
+#box{
+    position: absolute;
+    left: 10px;
+    top: 20px;
+    width: 200px;
+    height: 100px;
+    background-color: #bfa;
+}
+    </style>
+</head>
+<body>
+    <div id="box"></div>
+    <script>
+           var box = document.getElementById('box');
+           box.onmousedown = function(event){
+               event = event ||window.event
+               //拿到元素的初始位置 偏移量
+               var eleX = box.offsetLeft;
+               var eleY = box.offsetTop;
+            //   console.log(eleX,eleY);
+            //拿到鼠标的初始位置
+            var startX = event.clientX;
+            var startY = event.clientY;
+            console.log(startX, startY);
+            //盒子移动时触发的函数
+            document.onmousemove = function(event){
+                event = event ||window.event
+                var endX = event.clientX; 
+                var endY = event.clientY;
+                // 元素的最终位置 = 鼠标的结束位置-（鼠标初始位置-元素初始位置）
+                      //           鼠标的距离差加上元素的初始位置 
+               var disX = endX-startX;
+               var disY=endY-startY;
+               var lastX= eleX+disX;
+               var lastY= eleY+disY;
+               scrollIn.setCapture&&scrollIn.setCapture()
+             
+               if(lastX<0){
+                   lastX=0
+               }else if(lastX>document.documentElement.clientWidth-box.offsetWidth){
+                lastX=document.documentElement.clientWidth-box.offsetWidth
+               }
+               if(lastY<0){
+                   lastY=0
+               }else if(lastY>document.documentElement.clientHeight-box.offsetHeight){
+                lastY=document.documentElement.clientHeight-box.offsetHeight
+               }
+               box.style.left=lastX+'px';
+               box.style.top=lastY+'px'
+           
+               
+               
+            } 
+            // PC端的onmousemove是不会自动清除的，需要我们自动清除
+            //我们不要在box上加onmousemove，因为当我们很快的移出盒子时，
+            //他的事件会冒泡到document上 ，所以我们给document加上比较好
+         document.onmouseup=function(){
+              document.onmousemove=document.onmouseup=null
+              scrollIn.releaseCapture&&scrollIn.releaseCapture()
+          }
+            //   dom0事件取消浏览器的默认行为  return false
+             return false
+            //  dom2事件取消默认行为
+            // event.preventDefault()  
+               
+     //拖拽的问题
+        //1.事件在谁身上添加？
+        // 刚开始我们把所有事件添加在元素身上；
+                  // 因为移出元素后发现他无法移动了 然后进入元素又移动了
+                  // 这是因为移出元素后发现他的onmousemove发生在document身上是触发不了onmousemove的
+                  // 所以我们要加入到document身上 当鼠标移出时这时在document身上了移动的，onmousemove是不会取消的，利用事件冒泡的原理
+              }
+              
+    </script>
+</body>
+</html>
